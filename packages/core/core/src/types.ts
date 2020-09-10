@@ -154,7 +154,17 @@ export interface UseReviews<REVIEW, REVIEWS_SEARCH_PARAMS, REVIEW_ADD_PARAMS> {
   totalReviews: ComputedProperty<number>;
   averageRating: ComputedProperty<number>;
   loading: ComputedProperty<boolean>;
-  error: ComputedProperty<string | null>;
+  [x: string]: any;
+}
+
+export interface UseFacet<SEARCH_DATA, SEARCH_INPUT> {
+  searchData: ComputedProperty<FacetSearchData<SEARCH_DATA, SEARCH_INPUT>>;
+  loading: ComputedProperty<boolean>;
+  search: (params?: SEARCH_INPUT) => Promise<void>;
+  // sort: (sortBy: string) => Promise<void>;
+  // goPage: (page: number) => Promise<void>;
+  // setItemsPerPage: (itemsPerPage: number) => Promise<void>;
+  // applyFacet: (facet: AgnosticFacet) => Promise<void>;
 }
 
 export interface ProductGetters<PRODUCT, PRODUCT_FILTER> {
@@ -237,6 +247,17 @@ export interface UserOrderGetters<ORDER, ORDER_ITEM> {
   [getterName: string]: (element: any, options?: any) => unknown;
 }
 
+export interface FacetsGetters<SEARCH_DATA, SEARCH_INPUT, RESULTS, CRITERIA = any> {
+  getFacets: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>, criteria: CRITERIA) => AgnosticFacet[];
+  getGroupedFacets: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>, criteria: CRITERIA) => AgnosticGroupedFacet[];
+  getCategoryTree: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>) => AgnosticCategoryTree;
+  getSortOptions: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>) => AgnosticSort;
+  getResults: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>) => RESULTS;
+  getPaginationInfo: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>) => AgnosticPagination;
+  getBreadcrumbs: (searchData: FacetSearchData<SEARCH_DATA, SEARCH_INPUT>) => AgnosticBreadcrumb[];
+  [getterName: string]: (element: any, options?: any) => unknown;
+}
+
 export interface AgnosticMediaGalleryItem {
   small: string;
   normal: string;
@@ -247,6 +268,7 @@ export interface AgnosticCategoryTree {
   label: string;
   slug?: string;
   items: AgnosticCategoryTree[];
+  isSelected: boolean;
   [x: string]: unknown;
 }
 
@@ -315,4 +337,45 @@ export enum AgnosticOrderStatus {
   Complete = 'Complete',
   Cancelled = 'Cancelled',
   Refunded = 'Refunded'
+}
+
+export enum FacetType {
+  SORT,
+  SEARCH_TERM,
+  ATTRIBUTE,
+  CATEGORY
+}
+
+export interface AgnosticFacet {
+  type: string;
+  id: string;
+  value: any;
+  count?: number;
+  selected?: boolean;
+  metadata?: any;
+}
+
+export interface AgnosticGroupedFacet {
+  id: string;
+  label: string;
+  count?: number;
+  options: AgnosticFacet[];
+}
+
+export interface AgnosticSort {
+  options: AgnosticFacet[];
+  selected: string;
+}
+
+export interface AgnosticPagination {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+  pageOptions: number[];
+}
+
+export interface FacetSearchData<S, I> {
+  data: S;
+  input: I;
 }

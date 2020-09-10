@@ -6,3 +6,4 @@ export * from './useUserFactory';
 export * from './useUserOrdersFactory';
 export * from './apiClientFactory';
 export * from './useReviewsFactory';
+export * from './useFacetFactory';
